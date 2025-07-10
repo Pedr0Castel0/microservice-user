@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Response;
 
 class LoginRequest extends FormRequest
 {
@@ -27,5 +30,16 @@ class LoginRequest extends FormRequest
             'password.required' => 'O campo senha é obrigatório.',
             'password.string' => 'O campo senha deve ser um texto.',
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Erro de validação',
+                'errors' => $validator->errors()
+            ], Response::HTTP_UNPROCESSABLE_ENTITY)
+        );
     }
 }

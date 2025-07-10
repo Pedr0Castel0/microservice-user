@@ -5,31 +5,37 @@ alwaysApply: true
 # Contexto do Projeto: User Service
 
 ## Visão Geral
+
 Este é um microserviço Laravel 12 dedicado ao gerenciamento de usuários, desenvolvido em PHP 8.2. O projeto segue a arquitetura de microserviços e utiliza PostgreSQL como banco de dados.
 
 ## Arquitetura e Tecnologias
-- **Framework**: Laravel 12.x
-- **PHP**: ^8.2
-- **Banco de dados**: PostgreSQL
-- **Testes**: PHPUnit 11.x
-- **Ferramentas de desenvolvimento**: Laravel Pint, Pail, Sail
+
+-   **Framework**: Laravel 12.x
+-   **PHP**: ^8.2
+-   **Banco de dados**: PostgreSQL
+-   **Testes**: PHPUnit 11.x
+-   **Ferramentas de desenvolvimento**: Laravel Pint, Pail, Sail
 
 ## Estrutura Principal
-- **Modelos**: `app/Models/User.php` - Modelo principal para gerenciamento de usuários
-- **Controladores**: `app/Http/Controllers/` - Lógica de negócio
-- **Migrações**: `database/migrations/` - Estrutura de banco de dados
-- **Factories**: `database/factories/UserFactory.php` - Geração de dados de teste
-- **Rotas**: `routes/web.php` e `routes/console.php`
+
+-   **Modelos**: `app/Models/User.php` - Modelo principal para gerenciamento de usuários
+-   **Controladores**: `app/Http/Controllers/` - Lógica de negócio
+-   **Migrações**: `database/migrations/` - Estrutura de banco de dados
+-   **Factories**: `database/factories/UserFactory.php` - Geração de dados de teste
+-   **Rotas**: `routes/web.php` e `routes/console.php`
 
 ## Modelo User
+
 O modelo principal possui os seguintes campos:
-- `name` (string, preenchível)
-- `email` (string, preenchível)
-- `password` (string, preenchível, hasheado automaticamente)
-- `email_verified_at` (datetime, cast automático)
-- `remember_token` (hidden)
+
+-   `name` (string, preenchível)
+-   `email` (string, preenchível)
+-   `password` (string, preenchível, hasheado automaticamente)
+-   `email_verified_at` (datetime, cast automático)
+-   `remember_token` (hidden)
 
 ## Comandos de Desenvolvimento
+
 ```bash
 # Servidor de desenvolvimento
 php artisan serve
@@ -45,15 +51,18 @@ composer run dev
 ```
 
 ## Convenções do Projeto
-- Seguir PSR-12 para autoloading
-- Usar Eloquent ORM para interações com banco
-- Implementar Factory pattern para dados de teste
-- Manter código limpo sem comentários desnecessários conforme preferência
-- Respostas em português
+
+-   Seguir PSR-12 para autoloading
+-   Usar Eloquent ORM para interações com banco
+-   Implementar Factory pattern para dados de teste
+-   Manter código limpo sem comentários desnecessários conforme preferência
+-   Respostas em português
 
 ## Padrões de Microserviço
+
 Este serviço deve:
-- Ser independente e autocontido
-- Expor APIs RESTful para outros serviços
-- Gerenciar apenas dados relacionados a usuários
-- Manter baixo acoplamento com outros serviços
+
+-   Ser independente e autocontido
+-   Expor APIs RESTful para outros serviços
+-   Gerenciar apenas dados relacionados a usuários
+-   Manter baixo acoplamento com outros serviços

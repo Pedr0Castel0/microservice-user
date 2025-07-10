@@ -1,0 +1,342 @@
+{
+  "spec": {
+    "content": {
+      "openapi": "3.0.3",
+      "info": {
+        "title": "User Service API",
+        "description": "Microserviço para gerenciamento de usuários - Sistema de autenticação com Laravel Sanctum",
+        "version": "1.0.0",
+        "contact": {
+          "name": "User Service",
+          "url": "https://github.com/user/user-service"
+        }
+      },
+      "servers": [
+        {
+          "url": "http://localhost:8000/api",
+          "description": "Servidor de desenvolvimento"
+        }
+      ],
+      "paths": {
+        "/auth/register": {
+          "post": {
+            "tags": ["Autenticação"],
+            "summary": "Cadastrar novo usuário",
+            "description": "Endpoint para registrar um novo usuário no sistema",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["name", "email", "password", "password_confirmation"],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "João Silva"
+                      },
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "joao@exemplo.com"
+                      },
+                      "password": {
+                        "type": "string",
+                        "minLength": 8,
+                        "example": "senha123"
+                      },
+                      "password_confirmation": {
+                        "type": "string",
+                        "minLength": 8,
+                        "example": "senha123"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "201": {
+                "description": "Usuário cadastrado com sucesso",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Usuário cadastrado com sucesso"
+                        },
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "1|abcdef123456789"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "Bearer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "422": {
+                "description": "Erro de validação",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ValidationError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/auth/login": {
+          "post": {
+            "tags": ["Autenticação"],
+            "summary": "Fazer login",
+            "description": "Endpoint para autenticar usuário e obter token de acesso",
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["email", "password"],
+                    "properties": {
+                      "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "joao@exemplo.com"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "senha123"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "Login realizado com sucesso",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Login realizado com sucesso"
+                        },
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        },
+                        "token": {
+                          "type": "string",
+                          "example": "1|abcdef123456789"
+                        },
+                        "token_type": {
+                          "type": "string",
+                          "example": "Bearer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "422": {
+                "description": "Credenciais inválidas",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ValidationError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/auth/logout": {
+          "post": {
+            "tags": ["Autenticação"],
+            "summary": "Fazer logout",
+            "description": "Endpoint para invalidar o token de acesso atual",
+            "security": [
+              {
+                "sanctum": []
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Logout realizado com sucesso",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "Logout realizado com sucesso"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Token não autorizado",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/UnauthenticatedError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/auth/user": {
+          "get": {
+            "tags": ["Usuário"],
+            "summary": "Obter dados do usuário autenticado",
+            "description": "Retorna informações do usuário atualmente autenticado",
+            "security": [
+              {
+                "sanctum": []
+              }
+            ],
+            "responses": {
+              "200": {
+                "description": "Dados do usuário",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "user": {
+                          "$ref": "#/components/schemas/User"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "Token não autorizado",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/UnauthenticatedError"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "components": {
+        "securitySchemes": {
+          "sanctum": {
+            "type": "http",
+            "scheme": "bearer",
+            "bearerFormat": "token",
+            "description": "Token de autenticação do Laravel Sanctum"
+          }
+        },
+        "schemas": {
+          "User": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "name": {
+                "type": "string",
+                "example": "João Silva"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "joao@exemplo.com"
+              },
+              "email_verified_at": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true,
+                "example": null
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2024-01-15T10:30:00.000000Z"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2024-01-15T10:30:00.000000Z"
+              }
+            }
+          },
+          "ValidationError": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Os dados fornecidos são inválidos."
+              },
+              "errors": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "example": {
+                  "email": ["O campo email é obrigatório."],
+                  "password": ["O campo password deve ter pelo menos 8 caracteres."]
+                }
+              }
+            }
+          },
+          "UnauthenticatedError": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "example": "Unauthenticated."
+              }
+            }
+          }
+        }
+      },
+      "tags": [
+        {
+          "name": "Autenticação",
+          "description": "Endpoints para registro, login e logout de usuários"
+        },
+        {
+          "name": "Usuário",
+          "description": "Endpoints para gerenciamento de dados do usuário"
+        }
+      ]
+    }
+  },
+  "theme": "kepler",
+  "customCss": "body { font-family: 'Inter', sans-serif; }",
+  "favicon": "/favicon.ico",
+  "showSidebar": true,
+  "hideDownloadButton": false,
+  "searchHotKey": "k"
+}

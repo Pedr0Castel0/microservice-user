@@ -5,13 +5,12 @@ alwaysApply: true
 # Contexto do Projeto: User Service
 
 ## Visão Geral
-Este é um microserviço Laravel 12 dedicado ao gerenciamento de usuários, desenvolvido em PHP 8.2. O projeto segue a arquitetura de microserviços e utiliza SQLite como banco de dados.
+Este é um microserviço Laravel 12 dedicado ao gerenciamento de usuários, desenvolvido em PHP 8.2. O projeto segue a arquitetura de microserviços e utiliza PostgreSQL como banco de dados.
 
 ## Arquitetura e Tecnologias
 - **Framework**: Laravel 12.x
-- **PHP**: ^8.2  
-- **Banco de dados**: SQLite (database/database.sqlite)
-- **Frontend**: Vite + JavaScript/CSS básico
+- **PHP**: ^8.2
+- **Banco de dados**: PostgreSQL
 - **Testes**: PHPUnit 11.x
 - **Ferramentas de desenvolvimento**: Laravel Pint, Pail, Sail
 
@@ -25,7 +24,7 @@ Este é um microserviço Laravel 12 dedicado ao gerenciamento de usuários, dese
 ## Modelo User
 O modelo principal possui os seguintes campos:
 - `name` (string, preenchível)
-- `email` (string, preenchível) 
+- `email` (string, preenchível)
 - `password` (string, preenchível, hasheado automaticamente)
 - `email_verified_at` (datetime, cast automático)
 - `remember_token` (hidden)
@@ -35,7 +34,7 @@ O modelo principal possui os seguintes campos:
 # Servidor de desenvolvimento
 php artisan serve
 
-# Executar migrações  
+# Executar migrações
 php artisan migrate
 
 # Executar testes

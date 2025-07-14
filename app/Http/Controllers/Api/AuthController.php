@@ -5,51 +5,48 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
+use App\Http\Resources\UserResource;
+use App\Http\Traits\ResponseTrait;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    use ResponseTrait;
+
+    protected AuthService $authService;
+
+    public function __construct(AuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
     public function register(RegisterRequest $request): JsonResponse
     {
         try {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-            ]);
+            $result = $this->authService->register($request->validated());
 
-            $token = $user->createToken('auth_token', ['*'], now()->addDay())->plainTextToken;
-
-            return response()->json(
+            return $this->successResponse(
+                'Usuário cadastrado com sucesso',
                 [
-                    'success' => true,
-                    'message' => 'Usuário cadastrado com sucesso',
-                    'data' => [
-                        'user' => [
-                            'id' => $user->id,
-                            'name' => $user->name,
-                            'email' => $user->email,
-                            'created_at' => $user->created_at,
-                        ],
-                        'token' => $token,
-                        'token_type' => 'Bearer',
-                    ],
+                    'user' => new UserResource($result['user']),
+                    'token' => $result['token'],
+                    'token_type' => 'Bearer',
                 ],
-                Response::HTTP_CREATED,
+                Response::HTTP_CREATED
+            );
+        } catch (ValidationException $e) {
+            return $this->validationErrorResponse(
+                'Erro de validação',
+                $e->errors()
             );
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Erro interno do servidor',
-                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
-                ],
-                Response::HTTP_INTERNAL_SERVER_ERROR,
+            return $this->errorResponse(
+                'Erro interno do servidor',
+                $e->getMessage()
             );
         }
     }
@@ -57,47 +54,25 @@ class AuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         try {
-            $user = User::where('email', $request->email)->first();
+            $result = $this->authService->login($request->validated());
 
-            if (!$user || !Hash::check($request->password, $user->password)) {
-                return response()->json(
-                    [
-                        'success' => false,
-                        'message' => 'Credenciais inválidas',
-                        'errors' => [
-                            'email' => ['Credenciais inválidas.'],
-                        ],
-                    ],
-                    Response::HTTP_UNPROCESSABLE_ENTITY,
-                );
-            }
-
-            $token = $user->createToken('auth_token', ['*'], now()->addDay())->plainTextToken;
-
-            return response()->json(
+            return $this->successResponse(
+                'Login realizado com sucesso',
                 [
-                    'success' => true,
-                    'message' => 'Login realizado com sucesso',
-                    'data' => [
-                        'user' => [
-                            'id' => $user->id,
-                            'name' => $user->name,
-                            'email' => $user->email,
-                        ],
-                        'token' => $token,
-                        'token_type' => 'Bearer',
-                    ],
-                ],
-                Response::HTTP_OK,
+                    'user' => new UserResource($result['user']),
+                    'token' => $result['token'],
+                    'token_type' => 'Bearer',
+                ]
+            );
+        } catch (ValidationException $e) {
+            return $this->validationErrorResponse(
+                'Credenciais inválidas',
+                $e->errors()
             );
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Erro interno do servidor',
-                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
-                ],
-                Response::HTTP_INTERNAL_SERVER_ERROR,
+            return $this->errorResponse(
+                'Erro interno do servidor',
+                $e->getMessage()
             );
         }
     }
@@ -105,23 +80,13 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         try {
-            $request->user()->currentAccessToken()->delete();
+            $this->authService->logout($request->user()->currentAccessToken());
 
-            return response()->json(
-                [
-                    'success' => true,
-                    'message' => 'Logout realizado com sucesso',
-                ],
-                Response::HTTP_OK,
-            );
+            return $this->successResponse('Logout realizado com sucesso');
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Erro ao realizar logout',
-                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
-                ],
-                Response::HTTP_INTERNAL_SERVER_ERROR,
+            return $this->errorResponse(
+                'Erro ao realizar logout',
+                $e->getMessage()
             );
         }
     }
@@ -129,32 +94,16 @@ class AuthController extends Controller
     public function user(Request $request): JsonResponse
     {
         try {
-            $user = $request->user();
-
-            return response()->json(
+            return $this->successResponse(
+                'Dados do usuário obtidos com sucesso',
                 [
-                    'success' => true,
-                    'data' => [
-                        'user' => [
-                            'id' => $user->id,
-                            'name' => $user->name,
-                            'email' => $user->email,
-                            'email_verified_at' => $user->email_verified_at,
-                            'created_at' => $user->created_at,
-                            'updated_at' => $user->updated_at,
-                        ],
-                    ],
-                ],
-                Response::HTTP_OK,
+                    'user' => new UserResource($request->user()),
+                ]
             );
         } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'message' => 'Erro ao obter dados do usuário',
-                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
-                ],
-                Response::HTTP_INTERNAL_SERVER_ERROR,
+            return $this->errorResponse(
+                'Erro ao obter dados do usuário',
+                $e->getMessage()
             );
         }
     }

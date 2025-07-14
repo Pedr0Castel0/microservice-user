@@ -23,29 +23,34 @@ class AuthController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createToken('auth_token', ['*'], now()->addDay())->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuário cadastrado com sucesso',
-                'data' => [
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'created_at' => $user->created_at,
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'Usuário cadastrado com sucesso',
+                    'data' => [
+                        'user' => [
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'email' => $user->email,
+                            'created_at' => $user->created_at,
+                        ],
+                        'token' => $token,
+                        'token_type' => 'Bearer',
                     ],
-                    'token' => $token,
-                    'token_type' => 'Bearer',
-                ]
-            ], Response::HTTP_CREATED);
-
+                ],
+                Response::HTTP_CREATED,
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro interno do servidor',
-                'error' => config('app.debug') ? $e->getMessage() : 'Erro interno'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Erro interno do servidor',
+                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
@@ -55,37 +60,45 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
 
             if (!$user || !Hash::check($request->password, $user->password)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Credenciais inválidas',
-                    'errors' => [
-                        'email' => ['Credenciais inválidas.']
-                    ]
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                return response()->json(
+                    [
+                        'success' => false,
+                        'message' => 'Credenciais inválidas',
+                        'errors' => [
+                            'email' => ['Credenciais inválidas.'],
+                        ],
+                    ],
+                    Response::HTTP_UNPROCESSABLE_ENTITY,
+                );
             }
 
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createToken('auth_token', ['*'], now()->addDay())->plainTextToken;
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Login realizado com sucesso',
-                'data' => [
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'Login realizado com sucesso',
+                    'data' => [
+                        'user' => [
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'email' => $user->email,
+                        ],
+                        'token' => $token,
+                        'token_type' => 'Bearer',
                     ],
-                    'token' => $token,
-                    'token_type' => 'Bearer',
-                ]
-            ], Response::HTTP_OK);
-
+                ],
+                Response::HTTP_OK,
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro interno do servidor',
-                'error' => config('app.debug') ? $e->getMessage() : 'Erro interno'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Erro interno do servidor',
+                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
@@ -94,17 +107,22 @@ class AuthController extends Controller
         try {
             $request->user()->currentAccessToken()->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Logout realizado com sucesso'
-            ], Response::HTTP_OK);
-
+            return response()->json(
+                [
+                    'success' => true,
+                    'message' => 'Logout realizado com sucesso',
+                ],
+                Response::HTTP_OK,
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao realizar logout',
-                'error' => config('app.debug') ? $e->getMessage() : 'Erro interno'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Erro ao realizar logout',
+                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
@@ -113,26 +131,31 @@ class AuthController extends Controller
         try {
             $user = $request->user();
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'email_verified_at' => $user->email_verified_at,
-                        'created_at' => $user->created_at,
-                        'updated_at' => $user->updated_at,
-                    ]
-                ]
-            ], Response::HTTP_OK);
-
+            return response()->json(
+                [
+                    'success' => true,
+                    'data' => [
+                        'user' => [
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'email' => $user->email,
+                            'email_verified_at' => $user->email_verified_at,
+                            'created_at' => $user->created_at,
+                            'updated_at' => $user->updated_at,
+                        ],
+                    ],
+                ],
+                Response::HTTP_OK,
+            );
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao obter dados do usuário',
-                'error' => config('app.debug') ? $e->getMessage() : 'Erro interno'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Erro ao obter dados do usuário',
+                    'error' => config('app.debug') ? $e->getMessage() : 'Erro interno',
+                ],
+                Response::HTTP_INTERNAL_SERVER_ERROR,
+            );
         }
     }
 }

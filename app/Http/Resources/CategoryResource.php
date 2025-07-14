@@ -19,9 +19,9 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'image_url' => $this->image_url,
-            // 'dishes_count' => $this->when($this->relationLoaded('dishes'), function () {
-            //     return $this->dishes->count();
-            // }),
+            'dishes_count' => $this->when($this->relationLoaded('dishes'), function () {
+                return $this->dishes->count();
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

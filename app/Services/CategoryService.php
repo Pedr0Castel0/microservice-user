@@ -10,12 +10,12 @@ class CategoryService
 {
     public function getAllCategories(): Collection
     {
-        return Category::all();
+        return Category::with('dishes')->get();
     }
 
     public function getCategoryById(int $id): ?Model
     {
-        return Category::find($id);
+        return Category::with('dishes')->find($id);
     }
 
     public function createCategory(array $data): Category

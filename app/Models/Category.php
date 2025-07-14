@@ -10,14 +10,10 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'description',
-        'image_url',
-    ];
+    protected $fillable = ['name', 'description', 'image_url'];
 
-    // public function dishes(): HasMany
-    // {
-    //     return $this->hasMany(Dish::class);
-    // }
+    public function dishes(): HasMany
+    {
+        return $this->hasMany(Dish::class);
+    }
 }

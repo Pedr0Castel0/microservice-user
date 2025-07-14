@@ -52,7 +52,7 @@ composer run dev
 
 ## Convenções do Projeto
 
--   Seguir PSR-12 para autoloading
+-   Seguir PSR-4 para autoloading
 -   Usar Eloquent ORM para interações com banco
 -   Implementar Factory pattern para dados de teste
 -   Manter código limpo sem comentários desnecessários conforme preferência

@@ -2,37 +2,91 @@
 alwaysApply: true
 ---
 
-# Contexto do Projeto: User Service
+# Contexto do Projeto: El Sombrero - Restaurante Mexicano
 
 ## Visão Geral
 
-Este é um microserviço Laravel 12 dedicado ao gerenciamento de usuários, desenvolvido em PHP 8.2. O projeto segue a arquitetura de microserviços e utiliza PostgreSQL como banco de dados.
+Este é um microserviço Laravel 12 completo para gestão de restaurante mexicano, desenvolvido em PHP 8.2. O sistema integra gerenciamento de usuários, catálogo de pratos tradicionais mexicanos e processamento de pedidos com pagamento na entrega.
 
 ## Arquitetura e Tecnologias
 
 -   **Framework**: Laravel 12.x
 -   **PHP**: ^8.2
 -   **Banco de dados**: PostgreSQL
+-   **Autenticação**: Laravel Sanctum
 -   **Testes**: PHPUnit 11.x
 -   **Ferramentas de desenvolvimento**: Laravel Pint, Pail, Sail
 
 ## Estrutura Principal
 
--   **Modelos**: `app/Models/User.php` - Modelo principal para gerenciamento de usuários
--   **Controladores**: `app/Http/Controllers/` - Lógica de negócio
+-   **Modelos**:
+    - `app/Models/User.php` - Gerenciamento de clientes
+    - `app/Models/Category.php` - Categorias de pratos mexicanos
+    - `app/Models/Dish.php` - Pratos do cardápio
+    - `app/Models/Order.php` - Pedidos dos clientes
+    - `app/Models/OrderItem.php` - Itens dos pedidos
+-   **Controladores**: `app/Http/Controllers/Api/` - APIs RESTful
 -   **Migrações**: `database/migrations/` - Estrutura de banco de dados
--   **Factories**: `database/factories/UserFactory.php` - Geração de dados de teste
--   **Rotas**: `routes/web.php` e `routes/console.php`
+-   **Factories**: `database/factories/` - Geração de dados de teste
+-   **Rotas**: `routes/api.php` - APIs do restaurante
 
-## Modelo User
+## Modelos Principais
 
-O modelo principal possui os seguintes campos:
-
+### User (Cliente)
 -   `name` (string, preenchível)
--   `email` (string, preenchível)
--   `password` (string, preenchível, hasheado automaticamente)
--   `email_verified_at` (datetime, cast automático)
+-   `email` (string, preenchível, único)
+-   `password` (string, preenchível, hasheado)
+-   `email_verified_at` (datetime)
 -   `remember_token` (hidden)
+
+### Category (Categoria de Pratos)
+-   `name` (string, preenchível) - Ex: "Tacos", "Burritos"
+-   `description` (text, preenchível)
+-   `image_url` (string, opcional)
+
+### Dish (Prato)
+-   `name` (string, preenchível) - Ex: "Taco al Pastor"
+-   `description` (text, preenchível)
+-   `price` (decimal, preenchível)
+-   `category_id` (foreign key)
+-   `image_url` (string, opcional)
+-   `ingredients` (json, preenchível)
+-   `spice_level` (string, preenchível)
+-   `is_available` (boolean, padrão true)
+
+### Order (Pedido)
+-   `order_number` (string, único)
+-   `user_id` (foreign key)
+-   `total_amount` (decimal)
+-   `status` (enum: confirmado, em_preparo, saiu_entrega, entregue)
+-   `payment_method` (enum: dinheiro, pix, cartao_debito, cartao_credito)
+-   `payment_status` (enum: pendente, pago)
+-   `delivery_address` (json)
+-   `observations` (text, opcional)
+
+## Funcionalidades Implementadas
+
+### Autenticação
+-   Sistema completo de registro e login
+-   Autenticação via Laravel Sanctum
+-   Proteção de rotas por middleware
+
+### Catálogo de Pratos
+-   Gestão de categorias mexicanas
+-   Cardápio completo com pratos tradicionais
+-   Filtros por categoria, disponibilidade e busca
+-   Informações nutricionais e níveis de picância
+
+### Sistema de Pedidos
+-   Criação de pedidos com múltiplos itens
+-   Endereço de entrega e instruções especiais
+-   Acompanhamento de status do pedido
+-   Histórico de pedidos por cliente
+
+### Pagamento na Entrega
+-   Múltiplos métodos: dinheiro, PIX, cartão
+-   Sem integração com gateways online
+-   Controle de status de pagamento
 
 ## Comandos de Desenvolvimento
 
@@ -42,6 +96,9 @@ php artisan serve
 
 # Executar migrações
 php artisan migrate
+
+# Popular banco com dados de exemplo
+php artisan db:seed
 
 # Executar testes
 php artisan test
@@ -55,7 +112,10 @@ composer run dev
 -   Seguir PSR-4 para autoloading
 -   Usar Eloquent ORM para interações com banco
 -   Implementar Factory pattern para dados de teste
--   Manter código limpo sem comentários desnecessários conforme preferência
+-   APIs RESTful com responses padronizados
+-   Validação via Form Requests
+-   Middleware para autenticação e formatação JSON
+-   Manter código limpo sem comentários desnecessários
 -   Respostas em português
 
 ## Padrões de Microserviço
@@ -64,5 +124,29 @@ Este serviço deve:
 
 -   Ser independente e autocontido
 -   Expor APIs RESTful para outros serviços
+-   Gerenciar dados de usuários, pratos e pedidos
+-   Manter baixo acoplamento com outros serviços
+-   Implementar autenticação stateless com tokens
+-   Seguir princípios de responsabilidade única
+
+## Estrutura de Dados Mexicanos
+
+O sistema trabalha com dados específicos da culinária mexicana:
+
+-   **Categorias**: Tacos, Burritos, Quesadillas, Nachos, Bebidas
+-   **Ingredientes**: Carne al pastor, abacaxi, coentro, jalapeños
+-   **Níveis de Picância**: Suave, Médio, Picante, Muito Picante
+-   **Pratos Tradicionais**: Taco al Pastor, Burrito de Carnitas, Quesadilla de Pollo
+
+## APIs Principais
+
+-   `POST /api/register` - Registro de clientes
+-   `POST /api/login` - Autenticação
+-   `GET /api/categories` - Listar categorias
+-   `GET /api/dishes` - Cardápio completo
+-   `POST /api/orders` - Criar pedidos
+-   `GET /api/orders/{id}` - Acompanhar pedidos
+-   `GET /api/payment-methods` - Métodos de pagamento
+
 -   Gerenciar apenas dados relacionados a usuários
 -   Manter baixo acoplamento com outros serviços

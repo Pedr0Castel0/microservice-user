@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SpiceLevel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,7 +26,8 @@ class Dish extends Model
     protected $casts = [
         'ingredients' => 'array',
         'is_available' => 'boolean',
-        'price' => 'decimal:2'
+        'price' => 'decimal:2',
+        'spice_level' => SpiceLevel::class,
     ];
 
     public function category(): BelongsTo

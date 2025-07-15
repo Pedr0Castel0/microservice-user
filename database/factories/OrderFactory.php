@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,17 +20,13 @@ class OrderFactory extends Factory
      */
     public function definition(): array
     {
-        $statuses = ['confirmado', 'em_preparo', 'saiu_entrega', 'entregue'];
-        $paymentMethods = ['dinheiro', 'pix', 'cartao_debito', 'cartao_credito'];
-        $paymentStatuses = ['pendente', 'pago'];
-
         return [
             'order_number' => 'ORD-' . now()->format('YmdHis') . '-' . str_pad(fake()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT),
             'user_id' => User::factory(),
             'total_amount' => fake()->randomFloat(2, 25.00, 150.00),
-            'status' => fake()->randomElement($statuses),
-            'payment_method' => fake()->randomElement($paymentMethods),
-            'payment_status' => fake()->randomElement($paymentStatuses),
+            'status' => fake()->randomElement(OrderStatus::cases()),
+            'payment_method' => fake()->randomElement(PaymentMethod::cases()),
+            'payment_status' => fake()->randomElement(PaymentStatus::cases()),
             'delivery_address' => [
                 'street' => fake()->streetName(),
                 'number' => fake()->buildingNumber(),

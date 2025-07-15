@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\SpiceLevel;
 use App\Models\Category;
 use App\Models\Dish;
 use Illuminate\Database\Seeder;
@@ -84,7 +85,7 @@ class DishSeeder extends Seeder
                         'category_id' => $category->id,
                         'image_url' => "https://via.placeholder.com/400x300/FF6B35/FFFFFF?text=" . urlencode($dishData['name']),
                         'ingredients' => $dishData['ingredients'],
-                        'spice_level' => $dishData['spice_level'],
+                        'spice_level' => $this->getSpiceLevel($dishData['spice_level']),
                         'is_available' => true,
                     ]);
 
@@ -99,5 +100,16 @@ class DishSeeder extends Seeder
 
         $totalDishes = Dish::count();
         $this->command->info("Total de pratos criados: {$totalDishes}");
+    }
+
+    private function getSpiceLevel(string $level): SpiceLevel
+    {
+        return match ($level) {
+            'Suave' => SpiceLevel::SUAVE,
+            'Médio' => SpiceLevel::MEDIO,
+            'Picante' => SpiceLevel::PICANTE,
+            'Muito Picante' => SpiceLevel::MUITO_PICANTE,
+            default => SpiceLevel::SUAVE,
+        };
     }
 }

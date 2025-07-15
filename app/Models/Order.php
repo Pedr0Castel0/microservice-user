@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -24,7 +27,10 @@ class Order extends Model
 
     protected $casts = [
         'delivery_address' => 'array',
-        'total_amount' => 'decimal:2'
+        'total_amount' => 'decimal:2',
+        'status' => OrderStatus::class,
+        'payment_method' => PaymentMethod::class,
+        'payment_status' => PaymentStatus::class,
     ];
 
     public function user(): BelongsTo

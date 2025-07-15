@@ -1,0 +1,60 @@
+
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# 🧾 To-Do: Sistema de Pedidos Mexicanos (API Laravel)
+
+## 🧱 Migrations
+- [X] Tabela `categories`: `name`, `description`, `image_url`
+- [X] Tabela `dishes`: `name`, `description`, `price`, `category_id`, `image_url`, `ingredients (json)`, `spice_level`, `is_available`
+- [X] Tabela `orders`: `order_number`, `user_id`, `total_amount`, `status`, `payment_method`, `payment_status`, `delivery_address (json)`, `observations`
+- [X] Tabela `order_items`: `order_id`, `dish_id`, `quantity`, `unit_price`, `special_instructions`
+
+## 🧩 Models
+- [X] `Category` com fillable e relacionamento `hasMany(Dish)`
+- [X] `Dish` com relacionamento `belongsTo(Category)` + cast `ingredients`
+- [X] `Order` com `belongsTo(User)`, `hasMany(OrderItem)`, enums `status` e `payment_method`
+- [X] `OrderItem` com `belongsTo(Order)` e `belongsTo(Dish)`
+
+## 🏭 Factories
+- [X] `CategoryFactory`: categorias mexicanas (Tacos, Burritos, Quesadillas, etc.)
+- [X] `DishFactory`: pratos mexicanos, ingredientes, picância
+- [X] `OrderFactory`: dados realistas
+- [X] `OrderItemFactory`: quantidades e preços
+
+## 🌱 Seeders
+- [X] Seeder para categorias mexicanas
+- [X] Seeder para cardápio mexicano completo
+- [X] Atualizar `DatabaseSeeder` com `CategorySeeder` e `DishSeeder`
+
+## ✅ Requests
+- [X] `StoreCategoryRequest`, `UpdateCategoryRequest`
+- [X] `StoreDishRequest`, `UpdateDishRequest`
+- [X] `StoreOrderRequest`, `UpdateOrderRequest`
+
+## 📦 Resources
+- [X] `CategoryResource`
+- [X] `DishResource`
+- [X] `OrderResource`
+
+## 🧠 Services
+- [X] `CategoryService`
+- [X] `DishService` (filtros, busca, disponibilidade)
+- [X] `OrderService` (cálculo total, validação de itens)
+
+## 🎮 Controllers
+- [X] `CategoryController`: `index`, `show`, `store`, `update`, `destroy`
+- [X] `DishController`: `index`, `show`, `store`, `update`, `destroy`, filtros
+- [X] `OrderController`: `index`, `show`, `store`, `update`, tracking
+
+## 🌐 API & Auth
+- [X] Endpoint `GET /api/payment-methods`
+- [X] Definir rotas para `categories`, `dishes`, `orders`, `payment-methods`
+- [X] Middleware `auth:sanctum` para pedidos e listagens do usuário
+
+## ⚙️ Configurações Extras
+- [X] `User` com `hasMany(orders)`
+- [X] Criar enums: `OrderStatus`, `PaymentMethod`, `PaymentStatus`, `SpiceLevel`

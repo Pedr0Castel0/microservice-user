@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DishController;
+use App\Http\Controllers\Api\PaymentMethodController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -46,4 +47,8 @@ Route::prefix('dishes')->group(function () {
         Route::delete('/{id}', [DishController::class, 'destroy'])->name('api.dishes.destroy');
         Route::patch('/{id}/toggle-availability', [DishController::class, 'toggleAvailability'])->name('api.dishes.toggle-availability');
     });
+});
+
+Route::prefix('payment-methods')->group(function () {
+    Route::get('/', [PaymentMethodController::class, 'index'])->name('api.payment-methods.index');
 });

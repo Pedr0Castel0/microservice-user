@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DishController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -25,4 +26,24 @@ Route::prefix('categories')->group(function () {
     });
 });
 
+Route::prefix('dishes')->group(function () {
+    Route::get('/', [DishController::class, 'index'])->name('api.dishes.index');
+    Route::get('/available', [DishController::class, 'available'])->name('api.dishes.available');
+    Route::get('/featured', [DishController::class, 'featured'])->name('api.dishes.featured');
+    Route::get('/popular', [DishController::class, 'popular'])->name('api.dishes.popular');
+    Route::get('/spice-levels', [DishController::class, 'spiceLevels'])->name('api.dishes.spice-levels');
+    Route::get('/statistics', [DishController::class, 'statistics'])->name('api.dishes.statistics');
+    Route::get('/search', [DishController::class, 'search'])->name('api.dishes.search');
+    Route::get('/category/{categoryId}', [DishController::class, 'byCategory'])->name('api.dishes.by-category');
+    Route::get('/spice-level/{spiceLevel}', [DishController::class, 'bySpiceLevel'])->name('api.dishes.by-spice-level');
+    Route::get('/price-range', [DishController::class, 'byPriceRange'])->name('api.dishes.by-price-range');
+    Route::get('/{id}', [DishController::class, 'show'])->name('api.dishes.show');
+    Route::get('/{dishId}/recommendations', [DishController::class, 'recommendations'])->name('api.dishes.recommendations');
 
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [DishController::class, 'store'])->name('api.dishes.store');
+        Route::put('/{id}', [DishController::class, 'update'])->name('api.dishes.update');
+        Route::delete('/{id}', [DishController::class, 'destroy'])->name('api.dishes.destroy');
+        Route::patch('/{id}/toggle-availability', [DishController::class, 'toggleAvailability'])->name('api.dishes.toggle-availability');
+    });
+});
